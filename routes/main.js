@@ -4,7 +4,6 @@ const router = express.Router();
 import { login, register, loginFailed, logout } from "../controller/auth.js";
 import {
   deleteUser,
-  getUser,
   updateUserDetails,
   getCurrentUser,
 } from "../controller/user.js";
