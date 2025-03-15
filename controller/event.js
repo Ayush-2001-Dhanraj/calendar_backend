@@ -23,9 +23,9 @@ const createEvent = async (req, res, next) => {
   return next(new UnauthorizedError("Unauthorized!"));
 };
 const getAllUserEvents = async (req, res, next) => {
-  const { userID } = req.body;
+  const userID = req.params.userID;
   if (userID) {
-    const user = await sql("SELECT * FROM users WHERE id =$1", [userID]);
+    const user = await sql("SELECT * FROM users WHERE id = $1", [userID]);
     if (user.length) {
       const allEvents = await sql(
         "SELECT *, event_date::TEXT AS event_date FROM events WHERE user_id = $1",

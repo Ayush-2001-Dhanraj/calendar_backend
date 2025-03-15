@@ -2,11 +2,11 @@ import sql from "../db/sql.js";
 import { UnauthorizedError } from "../errors/index.js";
 
 const getCurrentUser = async (req, res, next) => {
-  const { userID } = req.body;
+  const userID = req.params.userID;
   if (userID) {
     const user = await sql(
-      `SELECT first_name, last_name, email FROM users where id = $1`,
-      [req.body.userID]
+      `SELECT first_name, last_name, email, id FROM users where id = $1`,
+      [userID]
     );
     return res.json({ user: user[0] });
   }

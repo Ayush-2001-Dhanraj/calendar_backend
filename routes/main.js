@@ -25,14 +25,16 @@ router.route("/auth/login").get(loginFailed).post(
 router.route("/auth/register").post(register);
 router.route("/auth/logout").get(logout);
 
+router.route("/user/:userID").get(getCurrentUser);
+
 router
   .route("/user")
-  .get(getCurrentUser)
+
   .put(updateUserDetails)
   .delete(deleteUser)
   .post(createEvent);
 
-router.route("/user/events").get(getAllUserEvents);
+router.route("/user/:userID/events").get(getAllUserEvents);
 
 router
   .route("/event/:eventID")
