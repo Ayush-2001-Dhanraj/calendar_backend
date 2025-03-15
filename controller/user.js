@@ -2,30 +2,20 @@ import sql from "../db/sql.js";
 import { UnauthorizedError } from "../errors/index.js";
 
 const getCurrentUser = async (req, res, next) => {
-  if (req.isAuthenticated()) {
-    return res.json({ user: req.user });
+  const { userID } = req.body;
+  if (userID) {
+    const user = await sql(
+      `SELECT first_name, last_name, email FROM users where id = $1`,
+      [req.body.userID]
+    );
+    return res.json({ user: user[0] });
   }
   return next(new UnauthorizedError("Unauthorized!"));
 };
 
-const getUser = async (req, res, next) => {
-  if (req.isAuthenticated()) {
-    const { userID } = req.params;
-    const user = await sql(
-      "SELECT first_name,last_name, email, id FROM users WHERE id =$1",
-      [userID]
-    );
-    if (user.length) {
-      return res.json({ user: user[0] });
-    } else {
-      return res.json({ msg: `Can't find the user with id ${userID}` });
-    }
-  }
-  return next(new UnauthorizedError("Unauthorized!"));
-};
 const updateUserDetails = async (req, res, next) => {
-  if (req.isAuthenticated()) {
-    const { userID } = req.params;
+  const { userID } = req.body;
+  if (userID) {
     const user = await sql("SELECT * FROM users WHERE id =$1", [userID]);
     if (user.length) {
       const { firstName, lastName, email } = req.body;
@@ -41,8 +31,8 @@ const updateUserDetails = async (req, res, next) => {
   return next(new UnauthorizedError("Unauthorized!"));
 };
 const deleteUser = async (req, res, next) => {
-  if (req.isAuthenticated()) {
-    const { userID } = req.params;
+  const { userID } = req.body;
+  if (userID) {
     const user = await sql(
       "SELECT first_name,last_name, email FROM users WHERE id =$1",
       [userID]
@@ -57,4 +47,4 @@ const deleteUser = async (req, res, next) => {
   return next(new UnauthorizedError("Unauthorized!"));
 };
 
-export { getUser, deleteUser, updateUserDetails, getCurrentUser };
+export { deleteUser, updateUserDetails, getCurrentUser };

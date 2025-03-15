@@ -7,17 +7,28 @@ const loginFailed = (req, res, next) => {
     .status(400)
     .json({ msg: "Login Failed! Check email or password!" });
 };
-const login = (req, res, next) => {
-  if (req.isAuthenticated()) {
-    console.log("User authenticated, session data:", req.session); // ✅ Check session
-
-    res.on("finish", () => {
-      console.log("Response headers:", res.getHeaders());
-    });
-
-    return res.json({ user: req.user });
+const login = async (req, res, next) => {
+  const { userID, email, password } = req.body;
+  if (userID) {
+    const user = await sql(
+      `SELECT first_name, last_name, email FROM users where id = $1`,
+      [req.body.userID]
+    );
+    return res.json({ user: user[0] });
   } else {
-    return next(new UnauthorizedError("Unauthorized!!"));
+    if (!email || !password)
+      return next(new BadRequestError("Incomplete Credentials"));
+
+    const dbUser = await sql(`SELECT * FROM users where email = $1`, [email]);
+    if (!dbUser.length) return next(new BadRequestError("User Doesn't exists"));
+    const { password: storedPassword, ...restDBData } = dbUser[0];
+    const passwordMatch = await bcrypt.compare(password, storedPassword);
+
+    if (passwordMatch) {
+      return res.json({ user: restDBData });
+    } else {
+      return next(new BadRequestError("Password doesn't match"));
+    }
   }
 };
 
@@ -38,22 +49,7 @@ const register = async (req, res, next) => {
         [firstName, lastName, email, hash]
       );
       const user = result[0];
-      req.logIn(user, (err) => {
-        if (err) {
-          console.log(err);
-          return next(new Error("Login failed"));
-        } else {
-          console.log("User logged in, session data:", req.session); // ✅ Check session
-          res.cookie("connect.sid", req.sessionID, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production", // Set to true in production
-            sameSite: "none",
-            maxAge: 1000 * 60 * 60 * 24, // 1 day
-          });
-
-          res.redirect(`/api/v1/user/${user.id}`);
-        }
-      });
+      return res.json({ user });
     }
   });
 };

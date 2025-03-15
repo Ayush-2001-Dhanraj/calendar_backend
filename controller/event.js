@@ -2,8 +2,8 @@ import sql from "../db/sql.js";
 import { UnauthorizedError } from "../errors/index.js";
 
 const createEvent = async (req, res, next) => {
-  if (req.isAuthenticated()) {
-    const { userID } = req.params;
+  const { userID } = req.body;
+  if (userID) {
     const user = await sql("SELECT * FROM users WHERE id =$1", [userID]);
     if (user.length) {
       const { title, description, eventDate, eventTime } = req.body;
@@ -23,8 +23,8 @@ const createEvent = async (req, res, next) => {
   return next(new UnauthorizedError("Unauthorized!"));
 };
 const getAllUserEvents = async (req, res, next) => {
-  if (req.isAuthenticated()) {
-    const { userID } = req.params;
+  const { userID } = req.body;
+  if (userID) {
     const user = await sql("SELECT * FROM users WHERE id =$1", [userID]);
     if (user.length) {
       const allEvents = await sql(
@@ -40,7 +40,8 @@ const getAllUserEvents = async (req, res, next) => {
   return next(new UnauthorizedError("Unauthorized!"));
 };
 const getEvent = async (req, res, next) => {
-  if (req.isAuthenticated()) {
+  const { userID } = req.body;
+  if (userID) {
     const { eventID } = req.params;
     const event = await sql("SELECT * FROM events WHERE id =$1", [eventID]);
     if (event.length) {
@@ -52,7 +53,8 @@ const getEvent = async (req, res, next) => {
   return next(new UnauthorizedError("Unauthorized!"));
 };
 const deleteEvent = async (req, res, next) => {
-  if (req.isAuthenticated()) {
+  const { userID } = req.body;
+  if (userID) {
     const { eventID } = req.params;
     const event = await sql("SELECT * FROM events WHERE id =$1", [eventID]);
     if (event.length) {
@@ -65,7 +67,8 @@ const deleteEvent = async (req, res, next) => {
   return next(new UnauthorizedError("Unauthorized!"));
 };
 const updateEvent = async (req, res, next) => {
-  if (req.isAuthenticated()) {
+  const { userID } = req.body;
+  if (userID) {
     const { eventID } = req.params;
     const event = await sql("SELECT * FROM events WHERE id =$1", [eventID]);
     if (event.length) {
