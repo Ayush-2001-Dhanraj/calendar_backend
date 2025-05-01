@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 3001;
 // Middlewares
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://calendar-be-p7lw.onrender.com",
   })
 );
 
