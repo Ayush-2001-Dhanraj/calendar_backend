@@ -29,17 +29,14 @@ router.route("/user/:userID").get(getCurrentUser);
 
 router
   .route("/user")
-
   .put(updateUserDetails)
   .delete(deleteUser)
   .post(createEvent);
 
 router.route("/user/:userID/events").get(getAllUserEvents);
 
-router
-  .route("/event/:eventID")
-  .get(getEvent)
-  .delete(deleteEvent)
-  .put(updateEvent);
+router.route("/event/:userID/:eventID").get(getEvent).delete(deleteEvent);
+
+router.route("/event/:eventID").put(updateEvent);
 
 export default router;

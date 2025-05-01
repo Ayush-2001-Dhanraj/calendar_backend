@@ -40,7 +40,7 @@ const getAllUserEvents = async (req, res, next) => {
   return next(new UnauthorizedError("Unauthorized!"));
 };
 const getEvent = async (req, res, next) => {
-  const { userID } = req.body;
+  const { userID } = req.params;
   if (userID) {
     const { eventID } = req.params;
     const event = await sql("SELECT * FROM events WHERE id =$1", [eventID]);
@@ -53,7 +53,7 @@ const getEvent = async (req, res, next) => {
   return next(new UnauthorizedError("Unauthorized!"));
 };
 const deleteEvent = async (req, res, next) => {
-  const { userID } = req.body;
+  const { userID } = req.params;
   if (userID) {
     const { eventID } = req.params;
     const event = await sql("SELECT * FROM events WHERE id =$1", [eventID]);
