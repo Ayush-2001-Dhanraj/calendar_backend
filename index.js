@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 3001;
 // Middlewares
 app.use(
   cors({
-    origin: "https://calendar-tau.vercel.app/",
+    origin: "https://calendar-tau.vercel.app",
   })
 );
 
